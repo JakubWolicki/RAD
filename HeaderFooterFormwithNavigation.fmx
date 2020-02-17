@@ -54,7 +54,7 @@ object HeaderFooterwithNavigation: THeaderFooterwithNavigation
     Size.Height = 479.000000000000000000
     Size.PlatformDefault = False
     TabHeight = 49.000000000000000000
-    TabIndex = 2
+    TabIndex = 0
     TabOrder = 1
     TabPosition = None
     Sizes = (
@@ -68,7 +68,7 @@ object HeaderFooterwithNavigation: THeaderFooterwithNavigation
       CustomIcon = <
         item
         end>
-      IsSelected = False
+      IsSelected = True
       Size.Width = 8.000000000000000000
       Size.Height = 8.000000000000000000
       Size.PlatformDefault = False
@@ -560,7 +560,7 @@ object HeaderFooterwithNavigation: THeaderFooterwithNavigation
       CustomIcon = <
         item
         end>
-      IsSelected = True
+      IsSelected = False
       Size.Width = 8.000000000000000000
       Size.Height = 8.000000000000000000
       Size.PlatformDefault = False
@@ -839,7 +839,7 @@ object HeaderFooterwithNavigation: THeaderFooterwithNavigation
         Size.Height = 25.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 9
-        Text = 'Button1'
+        Text = 'Logout'
         OnClick = Button1Click
       end
     end

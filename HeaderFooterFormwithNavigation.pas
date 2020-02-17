@@ -158,7 +158,7 @@ begin
 
     if ( ADOQuery.FieldByName('LogoutDate').Value > 0 ) then
     begin
-      str := str + 'Last seen ' + ADOQuery.FieldByName('LogoutDate').Value;
+      str := str + 'Last seen ' + DateToStr(ADOQuery.FieldByName('LogoutDate').Value);
     end
     else
     begin
@@ -349,7 +349,18 @@ begin
 
   { Login process }
   if validateResponse then
+  begin
+
+    ADOQuery.SQL.Clear;
+    ADOQuery.SQL.Add('SELECT * FROM Users WHERE Login = ' + edtAccRLogin.Text );
+    ADOQuery.Open;
+
+    ADOQueryUpdate.SQL.Clear;
+    ADOQueryUpdate.SQL.Add('INSERT INTO UserContacts (FK_User, FK_Contact) VALUES ( ' + ADOQuery.FieldByName('ID').Text + ' , 1 )' );
+    ADOQueryUpdate.ExecSQL;
+
     SetupUser(edtAccRLogin.Text);
+  end;
 
 end;
 //
@@ -357,7 +368,13 @@ end;
 //
 procedure THeaderFooterwithNavigation.btnChatSendClick(Sender: TObject);
 begin
-  lbxChatBox.Items.Add( edtChatInput.Text );
+  if ValidateStr(edtChatInput.Text) then
+  begin
+    ADOQuery.SQL.Clear;
+    ADOQuery.SQL.Add('INSERT INTO Msg (Text, FK_Status, FK_Sender, FK_Receiver) VALUES ( ''' + edtChatInput.Text + ''' , 1 , ' + Globals.userID.ToString + ' , ' + Globals.receiverID.ToString + ' ) ');
+    if ( ADOQuery.ExecSQL = 1 ) then
+      LoadMsg(Globals.userID,Globals.receiverID);
+  end;
 end;
 //
 { Adding contact }
@@ -469,7 +486,36 @@ begin
 end;
 
 procedure THeaderFooterwithNavigation.Button1Click(Sender: TObject);
+var
+  user : IXMLNode;
 begin
+
+  ADOQuery.SQL.Clear;
+  ADOQuery.SQL.Add('UPDATE Users SET LogoutDate = GETDATE() WHERE ID = ' + Globals.userID.ToString);
+  ADOQuery.ExecSQL;
+
+  Globals.userID := 0;
+  Globals.receiverID := 0;
+
+  try
+    user := XMLConfig.DocumentElement;
+
+    lblAccLL.Text := 'Last logged : ' + user.ChildNodes['name'].Text + ' day : ' + user.ChildNodes['date'].Text ;
+  finally
+
+  end;
+
+  btnAccLogin.Enabled := true;
+  btnAccRegister.Enabled := true;
+  lblAccLoginResponseValue.Text := 'Response : ';
+  lblAccRegisterResponseValue.Text := 'Response : ';
+  edtAccLogin.Text := '';
+  edtAccPassword.Text := '';
+  lbxChatBox.Items.Clear;
+  lbxContactList.Items.Clear;
+
+  ChangeTabAction1.Tab := TabItemAccount;
+  ChangeTabAction1.ExecuteTarget(Self);
 
 end;
 
@@ -569,11 +615,11 @@ begin
     ADOQuery.SQL.Add('WHERE ( FK_Receiver = '+ Receiver.ToString +' AND FK_Sender = '+ Sender.ToString +' ) OR ( FK_Receiver = '+ Sender.ToString +' AND FK_Sender = '+ Receiver.ToString +' ) ORDER BY StatusDate ASC ');
     ADOQuery.Open;
 
+    lbxChatBox.Items.Clear;
+
     while not ADOQuery.Eof do
     begin
-      lbxChatBox.Items.Add( '[' +
-        ADOQuery.FieldByName('From').Text + '] : ' +
-        ADOQuery.FieldByName('Text').Text );
+      lbxChatBox.Items.Add( '[' + ADOQuery.FieldByName('From').Text + '] : ' + ADOQuery.FieldByName('Text').Text );
       ADOQuery.Next;
     end;
 
@@ -622,6 +668,11 @@ begin
 
     imgBlockChat.Visible := false;
     imgBlockHistory.Visible := false;
+
+    ADOQueryUpdate.SQL.Clear;
+    ADOQueryUpdate.SQL.Add('UPDATE Users SET LoginDate = GETDATE() WHERE ID = ' + Globals.userID.ToString);
+    ADOQueryUpdate.ExecSQL;
+
   end
   else
   begin
