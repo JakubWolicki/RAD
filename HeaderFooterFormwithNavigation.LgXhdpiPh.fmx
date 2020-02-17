@@ -86,13 +86,10 @@ inherited HeaderFooterwithNavigation_LgXhdpiPh: THeaderFooterwithNavigation_LgXh
         Viewport.Width = 225.000000000000000000
         Viewport.Height = 329.000000000000000000
       end
-      inherited Edit1: TEdit
+      inherited edtContactLogin: TEdit
         Size.Height = 32.000000000000000000
       end
-      inherited Edit2: TEdit
-        Size.Height = 32.000000000000000000
-      end
-      inherited Edit3: TEdit
+      inherited edtContactSearch: TEdit
         Size.Height = 32.000000000000000000
       end
     end
@@ -102,70 +99,9 @@ inherited HeaderFooterwithNavigation_LgXhdpiPh: THeaderFooterwithNavigation_LgXh
     Size.Width = 450.000000000000000000
     Size.Height = 48.000000000000000000
   end
-  inherited Timer1: TTimer [3]
-  end
-  inherited ActionList1: TActionList [4]
-  end
-  inherited ADOConnectionRAD: TADOConnection [5]
+  inherited ADOConnectionRAD: TADOConnection
     ConnectionString = 
       'Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security In' +
       'fo=False;Initial Catalog=RAD;Data Source=DESKTOP-VH5HR8V'
-  end
-  inherited ADOQuery: TADOQuery [6]
-  end
-  inherited ADOStoredProc: TADOStoredProc [7]
-    Parameters = <
-      item
-        Name = '@pLogin'
-        Size = -1
-        Value = Null
-      end
-      item
-        Name = '@pPassword'
-        Size = -1
-        Value = Null
-      end
-      item
-        Name = '@response'
-        Direction = pdOutput
-        Size = -1
-        Value = Null
-      end>
-  end
-  inherited XMLConfig: TXMLDocument [8]
-  end
-  inherited ADOStoredProc2: TADOStoredProc [9]
-    Parameters = <
-      item
-        Name = '@pLogin'
-        Size = -1
-        Value = Null
-      end
-      item
-        Name = '@pPassword'
-        Size = -1
-        Value = Null
-      end
-      item
-        Name = '@pFirstName'
-        Size = -1
-        Value = Null
-      end
-      item
-        Name = '@pLastName'
-        Size = -1
-        Value = Null
-      end
-      item
-        Name = '@pEmail'
-        Size = -1
-        Value = Null
-      end
-      item
-        Name = '@response'
-        Direction = pdOutput
-        Size = -1
-        Value = Null
-      end>
   end
 end

@@ -61,12 +61,16 @@ type
     btnChatSend: TButton;
     Timer1: TTimer;
     lbxContactList: TListBox;
-    Edit1: TEdit;
-    Edit2: TEdit;
-    Edit3: TEdit;
-    Label1: TLabel;
-    Button1: TButton;
-    Label2: TLabel;
+    edtContactLogin: TEdit;
+    edtContactSearch: TEdit;
+    lblContactLogin: TLabel;
+    btnContactSearch: TButton;
+    btnContactAdd: TButton;
+    lblContactResult: TLabel;
+    ADOQueryMsg: TADOQuery;
+    ADOQueryUpdate: TADOQuery;
+    btnContactGo: TButton;
+    ChangeTabAction1: TChangeTabAction;
     procedure FormCreate(Sender: TObject);
     procedure TitleActionUpdate(Sender: TObject);
     procedure FormKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char; Shift: TShiftState);
@@ -76,8 +80,11 @@ type
     procedure SetupUser(Login : String);
     procedure btnAccRegisterClick(Sender: TObject);
     procedure btnChatSendClick(Sender: TObject);
-    procedure edtChatInputKeyUp(Sender: TObject; var Key: Word;
-      var KeyChar: Char; Shift: TShiftState);
+    procedure edtContactLoginChange(Sender: TObject);
+    procedure btnContactAddClick(Sender: TObject);
+    procedure AddContactToList (Login : String);
+    procedure LoadContactList (UserID : Integer);
+    procedure btnContactGoClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -125,6 +132,57 @@ begin
       TCustomAction(Sender).Text := TabControl1.ActiveTab.Text
     else
       TCustomAction(Sender).Text := '';
+  end;
+end;
+//
+{ Adding contact to list *reps }
+//
+procedure THeaderFooterwithNavigation.AddContactToList(Login : String);
+var
+  str : String;
+  msgReceivedCounter : Integer;
+begin
+  if ValidateStr(Login) then
+  begin
+    msgReceivedCounter := 0;
+    str := '';
+    str := '[' + Login + '] ';
+
+    ADOQuery.SQL.Clear;
+    ADOQuery.SQL.Add('SELECT * FROM Users WHERE Login = ''' + Login + ''' ');
+    ADOQuery.Open;
+
+    if ( ADOQuery.FieldByName('LogoutDate').Value > 0 ) then
+    begin
+      str := str + 'Last seen ' + ADOQuery.FieldByName('LogoutDate').Value;
+    end
+    else
+    begin
+      str := str + ' Active ';
+    end;
+
+    if ( ADOQuery.FieldByName('ID').Value > 0 ) then
+    begin
+      Globals.receiverID := ADOQuery.FieldByName('ID').Value;
+      ADOQueryMsg.SQL.Clear;
+      ADOQueryMsg.SQL.Add('SELECT * FROM Msg WHERE FK_Receiver =' + Globals.userID.ToString + ' AND FK_Sender = ' + Globals.receiverID.ToString + ' AND FK_Status = 1');
+      ADOQueryMsg.Open;
+
+      while not ADOQueryMsg.Eof do
+      begin
+        msgReceivedCounter := msgReceivedCounter + 1;
+
+        ADOQueryUpdate.SQL.Clear;
+        ADOQueryUpdate.SQL.Add('UPDATE Msg SET StatusDate = GETDATE() , FK_Status = 2 WHERE ID = ');
+        ADOQueryUpdate.SQL.Add(ADOQueryMsg.FindField('ID').Value);
+        ADOQueryUpdate.ExecSQL;
+
+      end;
+
+      str := str + ' #' + msgReceivedCounter.ToString;
+    end;
+
+    lbxContactList.Items.Add(str);
   end;
 end;
 //
@@ -297,6 +355,87 @@ procedure THeaderFooterwithNavigation.btnChatSendClick(Sender: TObject);
 begin
   lbxChatBox.Items.Add( edtChatInput.Text );
 end;
+//
+{ Adding contact }
+//
+procedure THeaderFooterwithNavigation.btnContactAddClick(Sender: TObject);
+var
+  validate,
+  validateLogin,
+  validateUserLookup,
+  validateInsert : Boolean;
+
+  contactID : Integer;
+begin
+
+  { Validation }
+
+  validate := false;
+  validateUserLookup := false;
+  validateLogin := ValidateStr( edtContactLogin.Text );
+
+  if not validateLogin then
+    lblContactResult.Text := 'Wrong login format';
+
+  if validateLogin AND ( Globals.userID > 0 ) then
+    validate := true;
+
+  { Validation END}
+
+  if validate then
+  begin
+
+    ADOQuery.SQL.Clear;
+    ADOQuery.SQL.Add('SELECT * FROM Users WHERE Login = ''' + edtContactLogin.Text + ''' ');
+    ADOQuery.Open;
+
+    if ( ADOQuery.FieldByName('ID').Value > 0 ) then
+    begin
+      validateUserLookup := true;
+      contactID := ADOQuery.FieldByName('ID').Value;
+    end
+    else
+    begin
+      lblContactResult.Text := 'User does not exists';
+    end;
+
+    if validateUserLookup then
+    begin
+
+      ADOQuery.SQL.Clear;
+      ADOQuery.SQL.Add('INSERT INTO UserContacts (FK_User, FK_Contact) VALUES ( ' + Globals.userID.ToString + ' , ' + contactID.ToString + ' )' );
+      if ( ADOQuery.ExecSQL = 1 ) then
+        validateInsert := true;
+    end;
+
+  end;
+
+  if validateInsert then
+  begin
+    AddContactToList(edtContactLogin.Text);
+    edtContactLogin.Text := '';
+  end;
+
+
+end;
+
+procedure THeaderFooterwithNavigation.btnContactGoClick(Sender: TObject);
+var
+  receiverLogin : String;
+  position : Integer;
+begin
+  if lbxContactList.Selected.IsSelected then
+  begin
+    position := ansipos(']',lbxContactList.Selected.Text);
+
+    receiverLogin := Copy(lbxContactList.Selected.Text, 2, ( position - 2 ));
+
+    Globals.receiverLogin := receiverLogin;
+
+    ChangeTabAction1.Tab := TabItemChat;
+    ChangeTabAction1.ExecuteTarget(Self);
+  end;
+end;
 
 //
 { Login edit enter }
@@ -323,12 +462,10 @@ begin
   edtAccREmail.Enabled := true;
 end;
 
-//
-{ Send message }
-//
-procedure THeaderFooterwithNavigation.edtChatInputKeyUp(Sender: TObject;
-  var Key: Word; var KeyChar: Char; Shift: TShiftState);
+
+procedure THeaderFooterwithNavigation.edtContactLoginChange(Sender: TObject);
 begin
+
 end;
 
 //
@@ -359,6 +496,28 @@ begin
     Key := 0;
   end;
 end;
+//
+{ Load contact list }
+//
+procedure THeaderFooterwithNavigation.LoadContactList(UserID: Integer);
+begin
+  ADOQuery.SQL.Clear;
+  ADOQuery.SQL.Add('SELECT * FROM UserContacts WHERE FK_User = ' + Globals.userID.ToString);
+  ADOQuery.Open;
+
+  while not ADOQuery.Eof do
+  begin
+    ADOQueryUpdate.SQL.Clear;
+    ADOQueryUpdate.SQL.Add('SELECT * FROM Users WHERE ID = ' + ADOQuery.FindField('FK_Contact').Text );
+    ADOQueryUpdate.Open;
+
+    AddContactToList(ADOQueryUpdate.FindField('Login').Value);
+
+    ADOQuery.Next;
+  end;
+
+end;
+
 //
 { Setting up global variables connected to user account }
 //
@@ -407,6 +566,8 @@ begin
 
 
   ADOQuery.SQL.Clear;
+  LoadContactList(Globals.userID);
+
 end;
 //
 { Procedures END }

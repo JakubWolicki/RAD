@@ -54,7 +54,7 @@ object HeaderFooterwithNavigation: THeaderFooterwithNavigation
     Size.Height = 479.000000000000000000
     Size.PlatformDefault = False
     TabHeight = 49.000000000000000000
-    TabIndex = 2
+    TabIndex = 1
     TabOrder = 1
     TabPosition = None
     Sizes = (
@@ -328,7 +328,7 @@ object HeaderFooterwithNavigation: THeaderFooterwithNavigation
       CustomIcon = <
         item
         end>
-      IsSelected = False
+      IsSelected = True
       Size.Width = 8.000000000000000000
       Size.Height = 8.000000000000000000
       Size.PlatformDefault = False
@@ -560,13 +560,15 @@ object HeaderFooterwithNavigation: THeaderFooterwithNavigation
       CustomIcon = <
         item
         end>
-      IsSelected = True
+      IsSelected = False
       Size.Width = 8.000000000000000000
       Size.Height = 8.000000000000000000
       Size.PlatformDefault = False
       StyleLookup = ''
       TabOrder = 0
       Text = 'Contacts'
+      ExplicitSize.cx = 8.000000000000000000
+      ExplicitSize.cy = 8.000000000000000000
       object imgBlockHistory: TImageControl
         Bitmap.PNG = {
           89504E470D0A1A0A0000000D494844520000010F0000016D08060000001913EF
@@ -757,7 +759,7 @@ object HeaderFooterwithNavigation: THeaderFooterwithNavigation
         Size.Width = 225.000000000000000000
         Size.Height = 329.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 1
+        TabOrder = 5
         DisableFocusEffect = True
         DefaultItemStyles.ItemStyle = ''
         DefaultItemStyles.GroupHeaderStyle = ''
@@ -765,59 +767,69 @@ object HeaderFooterwithNavigation: THeaderFooterwithNavigation
         Viewport.Width = 221.000000000000000000
         Viewport.Height = 325.000000000000000000
       end
-      object Edit1: TEdit
+      object edtContactLogin: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
-        TabOrder = 2
+        TabOrder = 3
         Position.X = 248.000000000000000000
         Position.Y = 72.000000000000000000
         Size.Width = 129.000000000000000000
         Size.Height = 25.000000000000000000
         Size.PlatformDefault = False
       end
-      object Edit2: TEdit
+      object edtContactSearch: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
-        TabOrder = 3
-        Position.X = 248.000000000000000000
-        Position.Y = 128.000000000000000000
-        Size.Width = 129.000000000000000000
-        Size.Height = 25.000000000000000000
-        Size.PlatformDefault = False
-      end
-      object Edit3: TEdit
-        Touch.InteractiveGestures = [LongTap, DoubleTap]
-        TabOrder = 4
+        TabOrder = 1
         Position.X = 16.000000000000000000
         Position.Y = 384.000000000000000000
         Size.Width = 129.000000000000000000
         Size.Height = 25.000000000000000000
         Size.PlatformDefault = False
       end
-      object Label1: TLabel
+      object lblContactLogin: TLabel
         Position.X = 248.000000000000000000
         Position.Y = 48.000000000000000000
         Size.Width = 129.000000000000000000
         Size.Height = 25.000000000000000000
         Size.PlatformDefault = False
-        Text = 'Label1'
-        TabOrder = 5
+        Text = 'Login'
+        TabOrder = 6
       end
-      object Button1: TButton
+      object btnContactSearch: TButton
         Position.X = 152.000000000000000000
         Position.Y = 384.000000000000000000
         Size.Width = 89.000000000000000000
         Size.Height = 25.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 6
-        Text = 'Button1'
+        TabOrder = 2
+        Text = 'Search'
       end
-      object Label2: TLabel
+      object btnContactAdd: TButton
         Position.X = 248.000000000000000000
-        Position.Y = 104.000000000000000000
+        Position.Y = 120.000000000000000000
         Size.Width = 129.000000000000000000
         Size.Height = 25.000000000000000000
         Size.PlatformDefault = False
-        Text = 'Label2'
+        TabOrder = 4
+        Text = 'Add'
+        OnClick = btnContactAddClick
+      end
+      object lblContactResult: TLabel
+        Position.X = 248.000000000000000000
+        Position.Y = 208.000000000000000000
+        Size.Width = 129.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
         TabOrder = 7
+      end
+      object btnContactGo: TButton
+        Position.X = 248.000000000000000000
+        Position.Y = 168.000000000000000000
+        Size.Width = 129.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 8
+        Text = 'Chat'
+        OnClick = btnContactGoClick
       end
     end
   end
@@ -830,6 +842,9 @@ object HeaderFooterwithNavigation: THeaderFooterwithNavigation
     Size.PlatformDefault = False
     StyleLookup = 'bottomtoolbar'
     TabOrder = 2
+  end
+  object Timer1: TTimer
+    Top = 484
   end
   object ActionList1: TActionList
     Left = 360
@@ -847,6 +862,9 @@ object HeaderFooterwithNavigation: THeaderFooterwithNavigation
     object NextTabAction1: TNextTabAction
       Category = 'Tab'
       TabControl = TabControl1
+    end
+    object ChangeTabAction1: TChangeTabAction
+      Category = 'Tab'
     end
   end
   object ADOConnectionRAD: TADOConnection
@@ -870,15 +888,18 @@ object HeaderFooterwithNavigation: THeaderFooterwithNavigation
     Parameters = <
       item
         Name = '@pLogin'
+        Size = -1
         Value = Null
       end
       item
         Name = '@pPassword'
+        Size = -1
         Value = Null
       end
       item
         Name = '@response'
         Direction = pdOutput
+        Size = -1
         Value = Null
       end>
     Left = 288
@@ -895,33 +916,48 @@ object HeaderFooterwithNavigation: THeaderFooterwithNavigation
     Parameters = <
       item
         Name = '@pLogin'
+        Size = -1
         Value = Null
       end
       item
         Name = '@pPassword'
+        Size = -1
         Value = Null
       end
       item
         Name = '@pFirstName'
+        Size = -1
         Value = Null
       end
       item
         Name = '@pLastName'
+        Size = -1
         Value = Null
       end
       item
         Name = '@pEmail'
+        Size = -1
         Value = Null
       end
       item
         Name = '@response'
         Direction = pdOutput
+        Size = -1
         Value = Null
       end>
     Left = 256
     Top = 44
   end
-  object Timer1: TTimer
-    Top = 484
+  object ADOQueryMsg: TADOQuery
+    Connection = ADOConnectionRAD
+    Parameters = <>
+    Left = 224
+    Top = 44
+  end
+  object ADOQueryUpdate: TADOQuery
+    Connection = ADOConnectionRAD
+    Parameters = <>
+    Left = 192
+    Top = 44
   end
 end
