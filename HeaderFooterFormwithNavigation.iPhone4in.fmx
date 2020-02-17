@@ -1,0 +1,166 @@
+inherited HeaderFooterwithNavigation_iPhone4in: THeaderFooterwithNavigation_iPhone4in
+  ClientHeight = 548
+  ClientWidth = 320
+  DesignerMasterStyle = 0
+  inherited TopToolBar: TToolBar
+    Size.Width = 320.000000000000000000
+    inherited ToolBarLabel: TLabel
+      Size.Width = 320.000000000000000000
+    end
+    inherited btnNext: TSpeedButton
+      Position.X = 276.000000000000000000
+    end
+  end
+  inherited TabControl1: TTabControl
+    Size.Width = 320.000000000000000000
+    Size.Height = 460.000000000000000000
+    Sizes = (
+      320s
+      460s
+      320s
+      460s
+      320s
+      460s)
+    inherited TabItemAccount: TTabItem
+      Size.Width = 11.000000000000000000
+      Size.Height = 11.000000000000000000
+      ExplicitSize.cx = 8.000000000000000000
+      ExplicitSize.cy = 8.000000000000000000
+      inherited edtAccLogin: TEdit
+        Size.Height = 30.000000000000000000
+      end
+      inherited edtAccPassword: TEdit
+        Size.Height = 30.000000000000000000
+      end
+      inherited edtAccRLogin: TEdit
+        Size.Height = 30.000000000000000000
+      end
+      inherited edtAccRPassword: TEdit
+        Size.Height = 30.000000000000000000
+      end
+      inherited edtAccRPassword2: TEdit
+        Size.Height = 30.000000000000000000
+      end
+      inherited edtAccRFirstName: TEdit
+        Size.Height = 30.000000000000000000
+      end
+      inherited edtAccRLastName: TEdit
+        Size.Height = 30.000000000000000000
+      end
+      inherited edtAccREmail: TEdit
+        Size.Height = 30.000000000000000000
+      end
+      inherited btnAccLogin: TButton
+        Enabled = False
+      end
+    end
+    inherited TabItemChat: TTabItem
+      Size.Width = 11.000000000000000000
+      Size.Height = 11.000000000000000000
+      ExplicitSize.cx = 8.000000000000000000
+      ExplicitSize.cy = 8.000000000000000000
+      inherited imgBlockChat: TImageControl
+        Position.X = 208.000000000000000000
+        Position.Y = 192.000000000000000000
+      end
+      inherited lbxChatBox: TListBox
+        Viewport.Width = 337.000000000000000000
+        Viewport.Height = 377.000000000000000000
+      end
+      inherited edtChatInput: TEdit
+        Size.Height = 30.000000000000000000
+      end
+    end
+    inherited TabItemContact: TTabItem
+      ExplicitSize.cx = 8.000000000000000000
+      ExplicitSize.cy = 8.000000000000000000
+      inherited imgBlockHistory: TImageControl
+        Position.X = -1.000000000000000000
+        Position.Y = 6.000000000000000000
+      end
+      inherited lbxContactList: TListBox
+        Viewport.Width = 225.000000000000000000
+        Viewport.Height = 329.000000000000000000
+      end
+      inherited Edit1: TEdit
+        Size.Height = 30.000000000000000000
+      end
+      inherited Edit2: TEdit
+        Size.Height = 30.000000000000000000
+      end
+      inherited Edit3: TEdit
+        Size.Height = 30.000000000000000000
+      end
+    end
+  end
+  inherited BottomToolBar: TToolBar
+    Position.Y = 504.000000000000000000
+    Size.Width = 320.000000000000000000
+  end
+  inherited Timer1: TTimer [3]
+  end
+  inherited ActionList1: TActionList [4]
+  end
+  inherited ADOConnectionRAD: TADOConnection [5]
+    ConnectionString = 
+      'Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security In' +
+      'fo=False;Initial Catalog=RAD;Data Source=DESKTOP-VH5HR8V'
+  end
+  inherited ADOQuery: TADOQuery [6]
+  end
+  inherited ADOStoredProc: TADOStoredProc [7]
+    Parameters = <
+      item
+        Name = '@pLogin'
+        Size = -1
+        Value = Null
+      end
+      item
+        Name = '@pPassword'
+        Size = -1
+        Value = Null
+      end
+      item
+        Name = '@response'
+        Direction = pdOutput
+        Size = -1
+        Value = Null
+      end>
+  end
+  inherited XMLConfig: TXMLDocument [8]
+  end
+  inherited ADOStoredProc2: TADOStoredProc [9]
+    Parameters = <
+      item
+        Name = '@pLogin'
+        Size = -1
+        Value = Null
+      end
+      item
+        Name = '@pPassword'
+        Size = -1
+        Value = Null
+      end
+      item
+        Name = '@pFirstName'
+        Size = -1
+        Value = Null
+      end
+      item
+        Name = '@pLastName'
+        Size = -1
+        Value = Null
+      end
+      item
+        Name = '@pEmail'
+        Size = -1
+        Value = Null
+      end
+      item
+        Name = '@response'
+        Direction = pdOutput
+        Size = -1
+        Value = Null
+      end>
+  end
+end
