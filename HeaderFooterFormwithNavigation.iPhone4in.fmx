@@ -7,6 +7,9 @@ inherited HeaderFooterwithNavigation_iPhone4in: THeaderFooterwithNavigation_iPho
     inherited ToolBarLabel: TLabel
       Size.Width = 320.000000000000000000
     end
+    inherited btnBack: TSpeedButton
+      OnClick = btnBackClick
+    end
     inherited btnNext: TSpeedButton
       Position.X = 276.000000000000000000
     end
@@ -96,25 +99,9 @@ inherited HeaderFooterwithNavigation_iPhone4in: THeaderFooterwithNavigation_iPho
     Position.Y = 504.000000000000000000
     Size.Width = 320.000000000000000000
   end
-  inherited Timer2: TTimer [4]
-  end
-  inherited ActionList1: TActionList [5]
-  end
-  inherited ADOConnectionRAD: TADOConnection [6]
+  inherited ADOConnectionRAD: TADOConnection
     ConnectionString = 
       'Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security In' +
       'fo=False;Initial Catalog=RAD;Data Source=DESKTOP-VH5HR8V'
-  end
-  inherited ADOQuery: TADOQuery [7]
-  end
-  inherited ADOStoredProc: TADOStoredProc [8]
-  end
-  inherited XMLConfig: TXMLDocument [9]
-  end
-  inherited ADOStoredProc2: TADOStoredProc [10]
-  end
-  inherited ADOQueryMsg: TADOQuery [11]
-  end
-  inherited ADOQueryUpdate: TADOQuery [12]
   end
 end

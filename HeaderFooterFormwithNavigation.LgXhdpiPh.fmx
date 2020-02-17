@@ -12,6 +12,7 @@ inherited HeaderFooterwithNavigation_LgXhdpiPh: THeaderFooterwithNavigation_LgXh
     end
     inherited btnBack: TSpeedButton
       Visible = False
+      OnClick = btnBackClick
     end
     inherited btnNext: TSpeedButton
       Position.X = 402.000000000000000000
@@ -99,25 +100,9 @@ inherited HeaderFooterwithNavigation_LgXhdpiPh: THeaderFooterwithNavigation_LgXh
     Size.Width = 450.000000000000000000
     Size.Height = 48.000000000000000000
   end
-  inherited Timer2: TTimer [4]
-  end
-  inherited ActionList1: TActionList [5]
-  end
-  inherited ADOConnectionRAD: TADOConnection [6]
+  inherited ADOConnectionRAD: TADOConnection
     ConnectionString = 
       'Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security In' +
       'fo=False;Initial Catalog=RAD;Data Source=DESKTOP-VH5HR8V'
-  end
-  inherited ADOQuery: TADOQuery [7]
-  end
-  inherited ADOStoredProc: TADOStoredProc [8]
-  end
-  inherited XMLConfig: TXMLDocument [9]
-  end
-  inherited ADOStoredProc2: TADOStoredProc [10]
-  end
-  inherited ADOQueryMsg: TADOQuery [11]
-  end
-  inherited ADOQueryUpdate: TADOQuery [12]
   end
 end

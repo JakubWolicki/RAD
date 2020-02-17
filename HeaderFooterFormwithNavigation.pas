@@ -92,6 +92,8 @@ type
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
+    procedure btnBackClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
   public
@@ -380,6 +382,11 @@ begin
   end;
 
 end;
+procedure THeaderFooterwithNavigation.btnBackClick(Sender: TObject);
+begin
+
+end;
+
 //
 { Send message button}
 //
@@ -569,6 +576,14 @@ end;
 //
 { Form creation / Load xml config }
 //
+procedure THeaderFooterwithNavigation.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  ADOQuery.SQL.Clear;
+  ADOQuery.SQL.Add('UPDATE Users SET LogoutDate = GETDATE(), LoginDate = NULL WHERE Users.ID = '+ Globals.userID.ToString);
+  ADOQuery.ExecSQL;
+end;
+
 procedure THeaderFooterwithNavigation.FormCreate(Sender: TObject);
 var
   user : IXMLNode;
@@ -621,6 +636,9 @@ end;
 { Load messages }
 //
 procedure THeaderFooterwithNavigation.LoadMsg(Sender, Receiver: Integer);
+var
+  I, counter : Integer;
+  tmp : Array of string;
 begin
 
   if ( Sender > 0 ) AND ( Receiver > 0 ) AND ( Sender <> Receiver ) then
@@ -630,7 +648,7 @@ begin
     ADOQuery.SQL.Add('SELECT TOP 20 Text, Sender.Login as [From], Receiver.Login as [To] FROM Msg ' );
     ADOQuery.SQL.Add('INNER JOIN Users as Sender ON FK_Sender = Sender.ID ');
     ADOQuery.SQL.Add('INNER JOIN Users as Receiver ON FK_Receiver = Receiver.ID ');
-    ADOQuery.SQL.Add('WHERE ( FK_Receiver = '+ Receiver.ToString +' AND FK_Sender = '+ Sender.ToString +' ) OR ( FK_Receiver = '+ Sender.ToString +' AND FK_Sender = '+ Receiver.ToString +' ) ORDER BY StatusDate ASC ');
+    ADOQuery.SQL.Add('WHERE ( FK_Receiver = '+ Receiver.ToString +' AND FK_Sender = '+ Sender.ToString +' ) OR ( FK_Receiver = '+ Sender.ToString +' AND FK_Sender = '+ Receiver.ToString +' ) ORDER BY Msg.ID DESC ');
     ADOQuery.Open;
 
     lbxChatBox.Items.Clear;
@@ -640,6 +658,20 @@ begin
       lbxChatBox.Items.Add( '[' + ADOQuery.FieldByName('From').Text + '] : ' + ADOQuery.FieldByName('Text').Text );
       ADOQuery.Next;
     end;
+
+    SetLength(tmp,lbxChatBox.Count);
+    for I := 0 To lbxChatBox.Count - 1 do
+      tmp[I] := lbxChatBox.ListItems[I].Text;
+
+    counter := lbxChatBox.Count - 1;
+    lbxChatBox.Items.Clear;
+
+    for I := 0 to counter do
+      lbxChatBox.Items.Add(tmp[counter - I]);
+
+    ADOQueryUpdate.SQL.Clear;
+    ADOQueryUpdate.SQL.Add('UPDATE Msg SET FK_Status = 3 WHERE FK_Status = 2 AND FK_Receiver = '+ Receiver.ToString + ' AND FK_Sender = '+ Sender.ToString);
+    ADOQueryUpdate.ExecSQL;
 
   end;
 
@@ -688,7 +720,7 @@ begin
     imgBlockHistory.Visible := false;
 
     ADOQueryUpdate.SQL.Clear;
-    ADOQueryUpdate.SQL.Add('UPDATE Users SET LoginDate = GETDATE() WHERE ID = ' + Globals.userID.ToString);
+    ADOQueryUpdate.SQL.Add('UPDATE Users SET LogoutDate = NULL, LoginDate = GETDATE() WHERE ID = ' + Globals.userID.ToString);
     ADOQueryUpdate.ExecSQL;
 
   end

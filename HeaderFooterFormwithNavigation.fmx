@@ -8,6 +8,7 @@ object HeaderFooterwithNavigation: THeaderFooterwithNavigation
   FormFactor.Height = 900
   FormFactor.Devices = [Desktop]
   OnCreate = FormCreate
+  OnClose = FormClose
   DesignerMasterStyle = 0
   object TopToolBar: TToolBar
     Anchors = []
@@ -522,12 +523,15 @@ object HeaderFooterwithNavigation: THeaderFooterwithNavigation
         Visible = False
       end
       object lbxChatBox: TListBox
+        Enabled = False
+        Locked = True
         Position.X = 24.000000000000000000
         Position.Y = 16.000000000000000000
         Size.Width = 337.000000000000000000
         Size.Height = 377.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 1
+        CanFocus = False
         DisableFocusEffect = True
         DefaultItemStyles.ItemStyle = ''
         DefaultItemStyles.GroupHeaderStyle = ''
@@ -858,6 +862,12 @@ object HeaderFooterwithNavigation: THeaderFooterwithNavigation
     OnTimer = Timer1Timer
     Top = 484
   end
+  object Timer2: TTimer
+    Interval = 10000
+    OnTimer = Timer2Timer
+    Left = 40
+    Top = 484
+  end
   object ActionList1: TActionList
     Left = 360
     Top = 536
@@ -971,11 +981,5 @@ object HeaderFooterwithNavigation: THeaderFooterwithNavigation
     Parameters = <>
     Left = 192
     Top = 44
-  end
-  object Timer2: TTimer
-    Interval = 20000
-    OnTimer = Timer2Timer
-    Left = 40
-    Top = 484
   end
 end
