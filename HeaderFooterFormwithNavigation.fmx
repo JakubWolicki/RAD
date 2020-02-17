@@ -54,7 +54,7 @@ object HeaderFooterwithNavigation: THeaderFooterwithNavigation
     Size.Height = 479.000000000000000000
     Size.PlatformDefault = False
     TabHeight = 49.000000000000000000
-    TabIndex = 1
+    TabIndex = 2
     TabOrder = 1
     TabPosition = None
     Sizes = (
@@ -328,7 +328,7 @@ object HeaderFooterwithNavigation: THeaderFooterwithNavigation
       CustomIcon = <
         item
         end>
-      IsSelected = True
+      IsSelected = False
       Size.Width = 8.000000000000000000
       Size.Height = 8.000000000000000000
       Size.PlatformDefault = False
@@ -560,7 +560,7 @@ object HeaderFooterwithNavigation: THeaderFooterwithNavigation
       CustomIcon = <
         item
         end>
-      IsSelected = False
+      IsSelected = True
       Size.Width = 8.000000000000000000
       Size.Height = 8.000000000000000000
       Size.PlatformDefault = False
@@ -802,6 +802,7 @@ object HeaderFooterwithNavigation: THeaderFooterwithNavigation
         Size.PlatformDefault = False
         TabOrder = 2
         Text = 'Search'
+        OnClick = btnContactSearchClick
       end
       object btnContactAdd: TButton
         Position.X = 248.000000000000000000
@@ -830,6 +831,16 @@ object HeaderFooterwithNavigation: THeaderFooterwithNavigation
         TabOrder = 8
         Text = 'Chat'
         OnClick = btnContactGoClick
+      end
+      object Button1: TButton
+        Position.X = 248.000000000000000000
+        Position.Y = 384.000000000000000000
+        Size.Width = 129.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 9
+        Text = 'Button1'
+        OnClick = Button1Click
       end
     end
   end

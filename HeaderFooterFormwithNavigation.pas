@@ -71,6 +71,7 @@ type
     ADOQueryUpdate: TADOQuery;
     btnContactGo: TButton;
     ChangeTabAction1: TChangeTabAction;
+    Button1: TButton;
     procedure FormCreate(Sender: TObject);
     procedure TitleActionUpdate(Sender: TObject);
     procedure FormKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char; Shift: TShiftState);
@@ -85,6 +86,9 @@ type
     procedure AddContactToList (Login : String);
     procedure LoadContactList (UserID : Integer);
     procedure btnContactGoClick(Sender: TObject);
+    procedure btnContactSearchClick(Sender: TObject);
+    procedure LoadMsg (Sender, Receiver : Integer);
+    procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -363,15 +367,17 @@ var
   validate,
   validateLogin,
   validateUserLookup,
-  validateInsert : Boolean;
+  validateInsert,
+  validateUnique : Boolean;
 
-  contactID : Integer;
+  contactID, I : Integer;
 begin
 
   { Validation }
 
   validate := false;
   validateUserLookup := false;
+  validateUnique := false;
   validateLogin := ValidateStr( edtContactLogin.Text );
 
   if not validateLogin then
@@ -399,15 +405,20 @@ begin
       lblContactResult.Text := 'User does not exists';
     end;
 
-    if validateUserLookup then
+    for I := 0 to lbxContactList.Count - 1 do
+      if not ContainsText(lbxContactList.ListItems[I].Text, edtContactLogin.Text) then
+        validateUnique := true;
+
+    if validateUnique then
     begin
-
-      ADOQuery.SQL.Clear;
-      ADOQuery.SQL.Add('INSERT INTO UserContacts (FK_User, FK_Contact) VALUES ( ' + Globals.userID.ToString + ' , ' + contactID.ToString + ' )' );
-      if ( ADOQuery.ExecSQL = 1 ) then
-        validateInsert := true;
+      if validateUserLookup then
+      begin
+        ADOQuery.SQL.Clear;
+        ADOQuery.SQL.Add('INSERT INTO UserContacts (FK_User, FK_Contact) VALUES ( ' + Globals.userID.ToString + ' , ' + contactID.ToString + ' )' );
+        if ( ADOQuery.ExecSQL = 1 ) then
+          validateInsert := true;
+      end;
     end;
-
   end;
 
   if validateInsert then
@@ -418,7 +429,9 @@ begin
 
 
 end;
-
+//
+{ Start chat with selected }
+//
 procedure THeaderFooterwithNavigation.btnContactGoClick(Sender: TObject);
 var
   receiverLogin : String;
@@ -432,9 +445,32 @@ begin
 
     Globals.receiverLogin := receiverLogin;
 
+    LoadMsg(Globals.userID,Globals.receiverID);
+
     ChangeTabAction1.Tab := TabItemChat;
     ChangeTabAction1.ExecuteTarget(Self);
   end;
+end;
+//
+{ Search for specific login in contact list }
+//
+procedure THeaderFooterwithNavigation.btnContactSearchClick(Sender: TObject);
+var
+  I : Integer;
+begin
+  if ValidateStr(edtContactSearch.Text) then
+  begin
+    for I := 0 to lbxContactList.Count - 1 do
+    begin
+      if ContainsText(lbxContactList.ListItems[I].Text, edtContactSearch.Text) then
+        lbxContactList.ListItems[I].IsSelected := true;
+    end;
+  end;
+end;
+
+procedure THeaderFooterwithNavigation.Button1Click(Sender: TObject);
+begin
+
 end;
 
 //
@@ -517,6 +553,34 @@ begin
   end;
 
 end;
+//
+{ Load messages }
+//
+procedure THeaderFooterwithNavigation.LoadMsg(Sender, Receiver: Integer);
+begin
+
+  if ( Sender > 0 ) AND ( Receiver > 0 ) AND ( Sender <> Receiver ) then
+  begin
+
+    ADOQuery.SQL.Clear;
+    ADOQuery.SQL.Add('SELECT TOP 20 Text, Sender.Login as [From], Receiver.Login as [To] FROM Msg ' );
+    ADOQuery.SQL.Add('INNER JOIN Users as Sender ON FK_Sender = Sender.ID ');
+    ADOQuery.SQL.Add('INNER JOIN Users as Receiver ON FK_Receiver = Receiver.ID ');
+    ADOQuery.SQL.Add('WHERE ( FK_Receiver = '+ Receiver.ToString +' AND FK_Sender = '+ Sender.ToString +' ) OR ( FK_Receiver = '+ Sender.ToString +' AND FK_Sender = '+ Receiver.ToString +' ) ORDER BY StatusDate ASC ');
+    ADOQuery.Open;
+
+    while not ADOQuery.Eof do
+    begin
+      lbxChatBox.Items.Add( '[' +
+        ADOQuery.FieldByName('From').Text + '] : ' +
+        ADOQuery.FieldByName('Text').Text );
+      ADOQuery.Next;
+    end;
+
+  end;
+
+
+end;
 
 //
 { Setting up global variables connected to user account }
@@ -567,6 +631,9 @@ begin
 
   ADOQuery.SQL.Clear;
   LoadContactList(Globals.userID);
+
+  ChangeTabAction1.Tab := TabItemContact;
+  ChangeTabAction1.ExecuteTarget(Self);
 
 end;
 //
