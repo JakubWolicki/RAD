@@ -72,6 +72,7 @@ type
     btnContactGo: TButton;
     ChangeTabAction1: TChangeTabAction;
     Button1: TButton;
+    Timer2: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure TitleActionUpdate(Sender: TObject);
     procedure FormKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char; Shift: TShiftState);
@@ -89,6 +90,8 @@ type
     procedure btnContactSearchClick(Sender: TObject);
     procedure LoadMsg (Sender, Receiver : Integer);
     procedure Button1Click(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
+    procedure Timer2Timer(Sender: TObject);
   private
     { Private declarations }
   public
@@ -125,6 +128,20 @@ End;
 {$R *.fmx}
 {$R *.LgXhdpiPh.fmx ANDROID}
 {$R *.iPhone4in.fmx IOS}
+//
+{ Refresh }
+//
+procedure THeaderFooterwithNavigation.Timer1Timer(Sender: TObject);
+begin
+  if ( Globals.userID > 0 ) AND ( Globals.receiverID > 0 ) then
+    LoadMsg(Globals.userID,Globals.receiverID);
+end;
+procedure THeaderFooterwithNavigation.Timer2Timer(Sender: TObject);
+begin
+  if ( Globals.userID > 0 ) then
+    LoadContactList(Globals.userID);
+end;
+
 //
 { Navigation big nono }
 //
@@ -169,7 +186,7 @@ begin
     begin
       Globals.receiverID := ADOQuery.FieldByName('ID').Value;
       ADOQueryMsg.SQL.Clear;
-      ADOQueryMsg.SQL.Add('SELECT * FROM Msg WHERE FK_Receiver =' + Globals.userID.ToString + ' AND FK_Sender = ' + Globals.receiverID.ToString + ' AND FK_Status = 1');
+      ADOQueryMsg.SQL.Add('SELECT * FROM Msg WHERE FK_Receiver =' + Globals.userID.ToString + ' AND FK_Sender = ' + Globals.receiverID.ToString + ' AND FK_Status IN ( 1 , 2 ) ');
       ADOQueryMsg.Open;
 
       while not ADOQueryMsg.Eof do
@@ -180,7 +197,7 @@ begin
         ADOQueryUpdate.SQL.Add('UPDATE Msg SET StatusDate = GETDATE() , FK_Status = 2 WHERE ID = ');
         ADOQueryUpdate.SQL.Add(ADOQueryMsg.FindField('ID').Value);
         ADOQueryUpdate.ExecSQL;
-
+        ADOQueryMsg.Next;
       end;
 
       str := str + ' #' + msgReceivedCounter.ToString;
@@ -391,7 +408,6 @@ var
 begin
 
   { Validation }
-
   validate := false;
   validateUserLookup := false;
   validateUnique := false;
@@ -586,6 +602,8 @@ begin
   ADOQuery.SQL.Clear;
   ADOQuery.SQL.Add('SELECT * FROM UserContacts WHERE FK_User = ' + Globals.userID.ToString);
   ADOQuery.Open;
+
+  lbxContactList.Items.Clear;
 
   while not ADOQuery.Eof do
   begin
